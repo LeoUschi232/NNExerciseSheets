@@ -14,10 +14,9 @@ and omits many desirable features.
 # Libraries
 # Standard library
 import random
-
 # Third-party libraries
 import numpy as np
-
+import matplotlib.pyplot as plt
 
 class Network(object):
 
@@ -47,7 +46,11 @@ class Network(object):
             cost += (summand * summand)
         return cost
 
-    def SGD(self, training_data, epochs=10001, mini_batch_size=0, eta=0.02, epoch_output=10):
+    def SGD(self, training_data,
+            epochs=10001,
+            mini_batch_size=0,
+            eta=0.02,
+            epoch_output=10):
         if mini_batch_size <= 0:
             mini_batch_size = len(training_data)
         n = len(training_data)
@@ -88,7 +91,7 @@ class Network(object):
             zs.append(z)
             activation = sigmoid(z)
             activations.append(activation)
-        delta = self.cost_derivative(activations[-1], expected_output) * sigmoid_prime(zs[-1])
+        delta = cost_derivative(activations[-1], expected_output) * sigmoid_prime(zs[-1])
         nabla_b[-1] = delta
         nabla_w[-1] = np.dot(delta, activations[-2].transpose())
         for l in range(2, self.num_layers):
@@ -104,13 +107,14 @@ class Network(object):
                         for (x, y) in test_data]
         return sum(int(x == y) for (x, y) in test_results)
 
-    def cost_derivative(self, output_activations, y):
-        return output_activations - y
-
 
 # Miscellaneous functions
 def sigmoid(z):
     return 1.0 / (1.0 + np.exp(-z))
+
+
+def cost_derivative(output_activations, y):
+    return output_activations - y
 
 
 def sigmoid_prime(z):

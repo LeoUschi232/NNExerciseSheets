@@ -2,31 +2,24 @@ from matplotlib import pyplot as plt
 from NielsenNetwork import Network
 from numpy import sin, cos, pi, mgrid, vstack, array
 
-# Define instance variables
-debug = 1
+# Define training variables
 training_size = 1000
 training_range = range(training_size)
 loops = 10
-test_size = 1600
-test_range = range(test_size)
 xy_limit = 2
-size = 50
-plot_training = 0
-output_weight = 2
-nbins = 100
 
 # Training data
-x_training = [2 * xy_limit * (k / training_size) * sin(loops * pi * k / training_size)
-              if k < (training_size / 2) else
-              -2 * xy_limit * ((k - (training_size / 2)) / training_size) * sin(
-                  loops * pi * (k - (training_size / 2)) / training_size)
+x_training = [xy_limit * xy_limit * (k / training_size) * sin(loops * pi * k / training_size)
+              if k < (training_size / xy_limit) else
+              -xy_limit * xy_limit * ((k - (training_size / xy_limit)) / training_size) * sin(
+                  loops * pi * (k - (training_size / xy_limit)) / training_size)
               for k in training_range]  # noqa
-y_training = [2 * xy_limit * (k / training_size) * cos(loops * pi * k / training_size)
-              if k < (training_size / 2) else
-              -2 * xy_limit * ((k - (training_size / 2)) / training_size) * cos(
-                  loops * pi * (k - (training_size / 2)) / training_size)
+y_training = [xy_limit * xy_limit * (k / training_size) * cos(loops * pi * k / training_size)
+              if k < (training_size / xy_limit) else
+              -xy_limit * xy_limit * ((k - (training_size / xy_limit)) / training_size) * cos(
+                  loops * pi * (k - (training_size / xy_limit)) / training_size)
               for k in training_range]  # noqa
-expected_output = [output_weight if k < (training_size / 2) else -output_weight for k in training_range]
+expected_output = [xy_limit if k < (training_size / xy_limit) else -xy_limit for k in training_range]
 training_data = [[(x_training[k], y_training[k]), expected_output[k]] for k in training_range]
 
 
@@ -41,15 +34,19 @@ colors = []
 for i in training_range:
     colors.append(color_function(expected_output[i]))
 for i in training_range:
-    plt.scatter(x_training[i], y_training[i], c=colors[i], s=size, linewidths=0)
+    plt.scatter(x_training[i], y_training[i],
+                c=colors[i],
+                s=50,
+                linewidths=0)
 plt.show()
 plt.close()
 
 # Initialisation variables
+nbins = 100
 network = Network()
 
 # initial network results
-x, y = mgrid[-output_weight:output_weight:nbins * 1j, -output_weight:output_weight:nbins * 1j]
+x, y = mgrid[-xy_limit:xy_limit:nbins * 1j, -xy_limit:xy_limit:nbins * 1j]
 z = []
 for xi, yi in zip(x.flatten(), y.flatten()):
     output = network.feedforward([xi, yi])
@@ -60,14 +57,15 @@ plt.show()
 plt.close()
 
 # Training
-epochs = 100001
-eta = 0.3
-mini_batch_size = 100
-network.SGD(training_data)
+network.SGD(training_data=training_data,
+            epochs=100001,
+            mini_batch_size=0,
+            eta=0.5,
+            epoch_output=10)
 plt.close()
 
 # initial network results
-x, y = mgrid[-output_weight:output_weight:nbins * 1j, -output_weight:output_weight:nbins * 1j]
+x, y = mgrid[-xy_limit:xy_limit:nbins * 1j, -xy_limit:xy_limit:nbins * 1j]
 z = []
 for xi, yi in zip(x.flatten(), y.flatten()):
     output = network.feedforward([xi, yi])
