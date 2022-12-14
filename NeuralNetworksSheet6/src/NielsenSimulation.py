@@ -57,6 +57,7 @@ plt.show()
 plt.close()
 
 # Training
+# When mini_batch_size is set to zero it'll automatically change to mini_batch_size=len(training_data)
 network.SGD(training_data=training_data,
             epochs=100001,
             mini_batch_size=0,
