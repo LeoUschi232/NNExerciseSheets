@@ -1,11 +1,14 @@
 from tensorflow import keras
-from tensorflow.keras import layers  # noqa
+from tensorflow.keras import layers
 from matplotlib import pyplot as plt
-from numpy import sin, cos, pi, mgrid, vstack, array
+from numpy import sin, cos, pi, mgrid, array
+
+print(f"Simulation of advanced neural network started started")
 
 # Creating a machine learning model to simulate the neural network that will learn my prompt
 input_shape = (2,)
-model = keras.Sequential([
+print(f"Simulation of advanced neural network at checkpoint 1")
+network = keras.Sequential([
     layers.Input(shape=input_shape),
     layers.Conv2D(32, kernel_size=(3, 3), activation="sigmoid"),
     layers.MaxPooling2D(pool_size=(2, 2)),
@@ -16,7 +19,10 @@ model = keras.Sequential([
     layers.Dense(10, activation="softmax"),
     layers.Dense(1, activation="softmax")
 ])
-model.summary()
+print(f"Simulation of advanced neural network at checkpoint 2")
+network.summary()
+
+print(f"Simulation of advanced neural network at checkpoint 3")
 
 # Define training variables
 training_size = 1000
@@ -39,6 +45,8 @@ training_input = [(x_training[k], y_training[k]) for k in training_range]
 expected_output = [xy_limit if k < (training_size / xy_limit) else -xy_limit for k in training_range]
 training_data = [[training_input[k], expected_output[k]] for k in training_range]
 
+print(f"Simulation of advanced neural network at checkpoint 4")
+
 
 # Color function to ascertain the point's value
 def color_function(xy_sign: float):
@@ -57,9 +65,39 @@ for i in training_range:
 plt.show()
 plt.close()
 
+print(f"Simulation of advanced neural network at checkpoint 5")
+
+# Initialisation variables
+nbins = 100
+
+# initial network results
+x, y = mgrid[-xy_limit:xy_limit:nbins * 1j, -xy_limit:xy_limit:nbins * 1j]
+z = []
+for xi, yi in zip(x.flatten(), y.flatten()):
+    output = network.output(xi, yi)
+    z.append(output)
+z = array(z)
+plt.pcolormesh(x, y, z.reshape(x.shape), shading='auto')
+plt.show()
+plt.close()
+
 # Training the machine learning network
-model.compile(loss="mean_squared_error", optimizer="adam", metrics=["accuracy"])
-model.fit(training_input, expected_output,
-          batch_size=50,
-          epochs=1001,
-          validation_split=0.1)
+network.compile(loss="mean_squared_error", optimizer="adam", metrics=["accuracy"])
+network.fit(training_input, expected_output,
+            batch_size=50,
+            epochs=1001,
+            validation_split=0.1)
+
+print(f"Simulation of advanced neural network at checkpoint 6")
+
+# after training network results
+z = []
+for xi, yi in zip(x.flatten(), y.flatten()):
+    output = network.output(xi, yi)
+    z.append(output)
+z = array(z)
+plt.pcolormesh(x, y, z.reshape(x.shape), shading='auto')
+plt.show()
+plt.close()
+
+print(f"Simulation of advanced neural network finished")
