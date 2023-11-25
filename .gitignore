@@ -1,0 +1,5 @@
+# Hide the virtual environment
+venv
+
+# Hide the IDE project files
+.idea
