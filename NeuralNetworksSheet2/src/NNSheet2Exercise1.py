@@ -1,9 +1,9 @@
 from matplotlib.ticker import LinearLocator
 from matplotlib import pyplot as plt
-from numpy import pi, sin, array, meshgrid
+from numpy import pi, sin, array, meshgrid, zeros, linspace
 
 # Constants
-xmax = 150
+xmax = 250
 xrange = range(xmax + 1)
 c = 20.0
 dx = 1 / xmax
@@ -11,14 +11,13 @@ dt = 0.05 / xmax
 k = 4 * pi
 multiplier = (c * c * dt * dt / (dx * dx))
 
-# Time Steps
-xsteps = array([dx * i for i in xrange])
-tsteps = array([dt * i for i in xrange])
+# Position and Time Steps.
+xsteps = linspace(0, 1, xmax + 1)
+tsteps = linspace(0, xmax * dt, xmax + 1)
 
 # Function Psi
-# calculated using list comprehensions as designed
-# For explenation look up the manual calculations
-psi = array([array([0.0 for x in xsteps]) for t in tsteps])
+# For explanation look up the manual calculations.
+psi = zeros(shape=(len(xrange), len(xrange)))
 psi[0] = array([
     0 if (xn == 0 or xn == xmax) else
     5 * sin(k * xsteps[xn]) for xn in xrange
@@ -39,19 +38,14 @@ for tn in range(1, xmax):
 # Setting the parameters for plotting via matplotlib
 axes = plt.figure().add_subplot(projection="3d")
 (x, y) = meshgrid(xsteps, tsteps)
-z = psi
 
-# Create an empty array of strings with the same shape as the meshgrid, and
-# populate it with two colors in a checkerboard pattern.
+# Create an empty array of strings with the same shape as the meshgrid,
+# and populate it with two colors in a checkerboard pattern.
 colortuple = ("red", "blue")
-colors = array([
-    array([
-        colortuple[int((xn + yn) % len(colortuple))] for xn in xrange
-    ]) for yn in xrange
-])
+colors = array([array([colortuple[int((xn + yn) % len(colortuple))] for xn in xrange]) for yn in xrange])
 
 # Plotting function.
-axes.plot_surface(x, y, z, facecolors=colors, rcount=len(xsteps), ccount=len(tsteps))
+axes.plot_surface(x, y, psi, facecolors=colors)
 
 # Customize the z axis.
 axes.zaxis.set_major_locator(LinearLocator(6))
